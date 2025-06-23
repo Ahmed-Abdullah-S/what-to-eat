@@ -67,7 +67,7 @@ export default function FavoritesPage() {
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">ما فيه شي هنا للحين!</h3>
                 <p className="text-gray-600 mb-6">ابدأ الرحلة ودوّر لك وجبة تعجبك وأضفها للمفضلة</p>
                 <a
-                    href="/"
+                    href="/frontend/public"
                     className="inline-flex items-center px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors font-medium"
                 >
                   🔁 ابدأ الآن

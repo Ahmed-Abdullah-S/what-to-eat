@@ -20,7 +20,7 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-16">
             {/* Logo (right side) */}
             <div className="flex items-center flex-shrink-0">
-              <Link href="/" className="flex items-center space-x-2 space-x-reverse">
+              <Link href="/frontend/public" className="flex items-center space-x-2 space-x-reverse">
                 <div className="text-2xl">🍽️</div>
                 <span className="text-xl font-bold text-gray-900">وش آكل؟</span>
               </Link>

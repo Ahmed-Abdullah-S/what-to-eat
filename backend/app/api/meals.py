@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List, Optional
-from .. import crud, schemas, models
+from .. import crud, schemas
 from ..database import SessionLocal
 from ..auth import get_current_user
 import random

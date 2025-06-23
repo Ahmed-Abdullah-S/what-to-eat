@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from . import models, schemas
-from typing import List, Optional
+
 
 def get_meal(db: Session, meal_id: int):
     return db.query(models.Meal).filter(models.Meal.id == meal_id).first()

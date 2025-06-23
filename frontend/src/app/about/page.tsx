@@ -159,7 +159,7 @@ export default function AboutPage() {
               📧 راسلنا
             </a>
             <a
-              href="/"
+              href="/frontend/public"
               className="inline-flex items-center px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
             >
               🏠 العودة للرئيسية
