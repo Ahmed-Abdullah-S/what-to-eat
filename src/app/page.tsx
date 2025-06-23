@@ -1,103 +1,185 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import Navbar from '@/components/Navbar';
+import FilterControls from '@/components/FilterControls';
+import SpinnerSlotMachine from '@/components/SpinnerSlotMachine';
+import MealCard from '@/components/MealCard';
+import { useAppStore } from '@/lib/store';
+import { getFilteredMeals } from '@/lib/meals';
+import { Meal, FilterOptions } from '@/types/meal';
+import confetti from 'canvas-confetti';
+
+export default function HomePage() {
+  const router = useRouter();
+  const {
+    currentMeal,
+    filters,
+    setCurrentMeal,
+    setIsSpinning,
+    setFilters,
+    addToFavorites,
+    removeFromFavorites,
+    isFavorite,
+  } = useAppStore();
+
+  const [filteredMeals, setFilteredMeals] = useState<Meal[]>([]);
+  const [showResult, setShowResult] = useState(false);
+
+  useEffect(() => {
+    const meals = getFilteredMeals(filters);
+    setFilteredMeals(meals);
+  }, [filters]);
+
+  const handleFiltersChange = (newFilters: FilterOptions) => {
+    setFilters(newFilters);
+    setShowResult(false);
+    setCurrentMeal(null);
+  };
+
+  const handleSpin = () => {
+    setIsSpinning(true);
+    setShowResult(false);
+  };
+
+  const handleSpinComplete = (meal: Meal) => {
+    confetti({ particleCount: 100, spread: 70 });
+    setCurrentMeal(meal);
+    setIsSpinning(false);
+    setShowResult(true);
+  };
+
+  const handleToggleFavorite = (meal: Meal) => {
+    if (isFavorite(meal.id)) {
+      removeFromFavorites(meal.id);
+    } else {
+      addToFavorites(meal);
+    }
+  };
+
+  const handleSpinAgain = () => {
+    setShowResult(false);
+    setCurrentMeal(null);
+  };
+
+  const handleViewResult = () => {
+    if (currentMeal) {
+      router.push(`/result?id=${currentMeal.id}`);
+    }
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('/images/waves.svg')] bg-no-repeat bg-cover z-0" />
+        <Navbar />
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+        <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Header with fallback image */}
+          <div className="text-center mb-8">
+            <div className="flex justify-center mb-4">
+              <img src="https://cdn-icons-png.flaticon.com/512/1995/1995531.png" alt="Chef" className="w-32 h-32"/>
+            </div>
+            <h1 className="text-4xl md:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-pink-500 mb-4 leading-tight">
+              <span className="inline-block align-middle">🍽️</span> وش آكل؟
+            </h1>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              تطبيق تفاعلي يساعدك في اختيار ما تأكله في الرياض، السعودية
+            </p>
+          </div>
+
+          {/* Filters */}
+          <div className=" backdrop-blur-md rounded-xl p-4 mt-4">
+            <FilterControls filters={filters} onFiltersChange={handleFiltersChange}/>
+          </div>
+
+          {/* Spinner Centered */}
+          <div className="flex justify-center mt-6">
+            <SpinnerSlotMachine
+                meals={filteredMeals}
+                onSpin={handleSpin}
+                onSpinComplete={handleSpinComplete}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+          </div>
+
+          {/* Result Modal */}
+          {showResult && currentMeal && (
+              <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center px-4">
+                <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-md text-center animate-fade-in-up">
+                  <div className="text-4xl mb-4">🎉</div>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">تم اختيار وجبتك!</h2>
+                  <p className="text-gray-600 mb-4">مبروك! هذه هي الوجبة التي اختارتها العجلة لك</p>
+
+                  <MealCard
+                      meal={currentMeal}
+                      isFavorite={isFavorite(currentMeal.id)}
+                      onToggleFavorite={handleToggleFavorite}
+                      showActions={false}
+                  />
+
+                  <div className="mt-6 flex space-x-4 space-x-reverse">
+                    <button
+                        onClick={handleViewResult}
+                        className="flex-1 bg-primary-500 text-white py-3 px-6 rounded-lg hover:bg-primary-600 transition-colors font-medium"
+                    >
+                      عرض التفاصيل
+                    </button>
+                    <button
+                        onClick={handleSpinAgain}
+                        className="flex-1 bg-gray-100 text-gray-700 py-3 px-6 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+                    >
+                      جرب مرة أخرى
+                    </button>
+                  </div>
+                </div>
+              </div>
+          )}
+
+          {/* Quick Stats */}
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white rounded-lg p-6 text-center shadow-md animate-fade-in-up">
+              <div className="text-3xl font-bold text-primary-600 mb-2">
+                {filteredMeals.length}
+              </div>
+              <div className="text-gray-600">وجبة متاحة</div>
+            </div>
+            <div className="bg-white rounded-lg p-6 text-center shadow-md animate-fade-in-up delay-100">
+              <div className="text-3xl font-bold text-secondary-600 mb-2">
+                {filteredMeals.filter(m => m.cuisine === 'سعودي').length}
+              </div>
+              <div className="text-gray-600">وجبة سعودية</div>
+            </div>
+            <div className="bg-white rounded-lg p-6 text-center shadow-md animate-fade-in-up delay-200">
+              <div className="text-3xl font-bold text-success-600 mb-2">
+                {filteredMeals.filter(m => m.priceLevel === 'رخيص').length}
+              </div>
+              <div className="text-gray-600">وجبة رخيصة</div>
+            </div>
+          </div>
+
+          {/* Top Picks Section */}
+          <h2 className="text-xl font-bold text-gray-800 mt-12 mb-4 text-center">👑 أشهر الوجبات المقترحة</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredMeals.slice(0, 3).map(meal => (
+                <MealCard
+                    key={meal.id}
+                    meal={meal}
+                    isFavorite={isFavorite(meal.id)}
+                    onToggleFavorite={handleToggleFavorite}
+                />
+            ))}
+          </div>
+
+          {/* Quote */}
+          <div className="mt-12 text-center text-lg text-gray-600 italic">
+            "الوجبة الأفضل، أحياناً هي اللي ما تخطر على بالك!" 🍴
+          </div>
+
+          {/* Footer */}
+          <footer className="mt-16 text-center text-gray-400 text-sm">
+            صنع بكل ❤️ في الرياض — @ahmed.codes
+          </footer>
+        </main>
+      </div>
   );
 }

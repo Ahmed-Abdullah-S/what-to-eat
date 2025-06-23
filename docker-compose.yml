@@ -1,0 +1,29 @@
+services:
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: whattoeat
+      POSTGRES_PASSWORD: secretpassword
+      POSTGRES_DB: whattoeat
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./backend:/code
+    environment:
+      DATABASE_URL: postgresql+psycopg2://whattoeat:secretpassword@db:5432/whattoeat
+      ADMIN_USERNAME: admin
+      ADMIN_PASSWORD: admin123
+    ports:
+      - '8000:8000'
+    depends_on:
+      - db
+
+volumes:
+  postgres_data: 

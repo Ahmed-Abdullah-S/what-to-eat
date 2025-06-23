@@ -1,34 +1,24 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-# What to Eat? – Backend & Admin Setup
-
-## Prerequisites
-- Docker & Docker Compose installed
-
 ## Getting Started
 
-1. **Clone the repo**
-2. **Start the backend and database:**
-   ```sh
-   docker-compose up --build
-   ```
-   - FastAPI backend: [http://localhost:8000/docs](http://localhost:8000/docs)
-   - PostgreSQL: `localhost:5432`, user: `whattoeat`, password: `secretpassword`
+First, run the development server:
 
-3. **Default Admin Credentials:**
-   - Username: `admin`
-   - Password: `admin123`
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-4. **Seeding the Database:**
-   - (Instructions will be added after models are created)
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## Project Structure
-- `backend/` – FastAPI app
-- `frontend/` – Next.js admin dashboard (coming soon)
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
----
-
-For any issues, open an issue or contact @ahmed.codes
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
 ## Learn More
 
